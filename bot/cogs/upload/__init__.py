@@ -18,32 +18,23 @@ class Upload(commands.Cog):
         self.running = False
         
     @commands.slash_command(name="upload")
-    async def upload(self, ctx: discord.ApplicationContext, file: discord.Attachment, data: discord.Attachment):
+    async def upload(self, ctx: discord.ApplicationContext, file: discord.Attachment, data: discord.Attachment=None):
         """Upload a file to the server."""
         
         if not file.filename.endswith(".py"):
             embed = EmbedMaker(
                 title="錯誤 :animation_no:",
                 description="請上傳 Python 檔案！",
-                color=discord.Color.red(),
+                color="red",
             )
             await ctx.respond(embed=embed)
             return
         
-        if not data.filename.endswith(".json"):
+        if data and (not data.filename.endswith(".json")):
             embed = EmbedMaker(
                 title="錯誤 :animation_no:",
                 description="請上傳 JSON 檔案！",
-                color=discord.Color.red(),
-            )
-            await ctx.respond(embed=embed)
-            return
-        
-        if not data.filename == "param.json":
-            embed = EmbedMaker(
-                title="錯誤 :animation_no:",
-                description="請上傳 `param.json`！",
-                color=discord.Color.red(),
+                color="red",
             )
             await ctx.respond(embed=embed)
             return
@@ -60,7 +51,10 @@ class Upload(commands.Cog):
         waiting_resp = await ctx.respond("正在運行中，請稍後...", ephemeral=True)
         
         self.running = True
-        status_code, msg = Judge.judge(file=await file.read(), data=await data.read())
+        status_code, msg = \
+            Judge.judge(file=await file.read(), data=await data.read(), data_filename=data.filename) \
+            if data else Judge.judge(file=await file.read())
+            
         self.running = False
         log.debug(f"status_code: {status_code}, msg: {msg}")
         
@@ -93,7 +87,7 @@ class Upload(commands.Cog):
                 embed.add_field(name="測試結果: ", value="Compile Error", inline=True)
 
         Judge.reset()
-        await ctx.respond(embed=embed)
+        await ctx.send(embed=embed)
         
         log.debug(f"{ctx.author.name}({ctx.author.id}) used {ctx.command.name}.")
         

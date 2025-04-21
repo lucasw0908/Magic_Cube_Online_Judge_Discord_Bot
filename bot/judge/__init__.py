@@ -45,7 +45,7 @@ class Judge:
             
 
     @classmethod
-    def judge(cls, file: bytes, data: bytes) -> Tuple[int, str]:
+    def judge(cls, file: bytes, data: bytes=None, data_filename: str=None) -> Tuple[int, str]:
         """Judge the file and return the status code and message."""
         
         # File
@@ -54,14 +54,12 @@ class Judge:
         if not os.path.exists(path):
             os.makedirs(path)
         
-        file_path = os.path.join(path, "__init__.py")
-        data_path = os.path.join(path, "param.json")
-        
-        with open(file_path, "wb") as f:
+        with open(os.path.join(path, "__init__.py"), "wb") as f:
             f.write(file)
             
-        with open(data_path, "wb") as f:
-            f.write(data)
+        if data and data_filename:
+            with open(os.path.join(path, data_filename), "wb") as f:
+                f.write(data)
             
         # Compile Error   
         try:
