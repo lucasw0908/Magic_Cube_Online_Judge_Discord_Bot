@@ -1,0 +1,6 @@
+{
+    "LOCALE": "zh-TW",
+    "LOG_FILENAME": "bot.log",
+    "TIME_LIMIT": 1,
+    "CUBE_SIZE": 3
+}
