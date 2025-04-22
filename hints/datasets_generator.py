@@ -47,6 +47,7 @@ for i in range(data_count):
         for Coordinates, CubePiece in cube.get_all_pieces().items():
             output.extend([COLOR_CODE[s] for s in CubePiece.get_piece_colors_str()])
         x_train.append(np.array(output).reshape(-1))
+        cube.rotate(step)
         
     x_train = np.array(x_train).reshape(-1, 54)
     y_train = np.array([np.eye(len(MOVE_CODE))[MOVE_CODE[str(s)]] for s in solution]).reshape(-1, len(MOVE_CODE))
